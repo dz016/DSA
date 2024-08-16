@@ -58,6 +58,23 @@ class BST:
             if currNode.right:
                 queue.append(currNode.right)
         print("None")  # To indicate end of BFS
+        
+    def height(self):
+        ans =self._height(self.root)
+        return ans
+
+    def _height(self,node):
+        if node is None:
+            return -1
+        leftHeight = self._height(node.left)
+        rightHeight = self._height(node.right)
+        return max(leftHeight ,rightHeight)+1
+        
+
+
+            
+    
+    
 
 # Test cases
 def test_bst():
@@ -71,11 +88,6 @@ def test_bst():
     print(bst.insert(12))  # Output: Inserted left
     print(bst.insert(18))  # Output: Inserted right
     print(bst.insert(5))   # Output: Value already exists
-
-    print("\nTree display (Pre-Order Traversal):")
-    bst.display()  # Should display all nodes in pre-order traversal
-
-    print("\nBFS Traversal:")
-    bst.BFS()  # Should display BFS traversal
+    print(bst.height())
 
 test_bst()
