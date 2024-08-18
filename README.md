@@ -39,7 +39,7 @@ This section contains my solutions to various algorithmic problems found on [Lee
 
 1. **Clone the Repository**: 
     ```bash
-    git clone https://github.com/yourusername/DSA.git
+   https://github.com/dz016/DSA.git
     ```
 
 2. **Navigate to the Desired Section**:
