@@ -1,3 +1,15 @@
-List = [5,9]
-mid =len(List) //2
-print( List[mid],List[:mid] , List[mid+1:])
+def helper():
+  counter = 0
+  def _helper():
+    nonlocal counter
+    if counter>10:
+      return
+    counter = counter + 1
+    _helper()
+    
+  _helper()
+  print(counter)
+
+
+
+helper()
