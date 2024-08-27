@@ -9,4 +9,4 @@ def changeA(arr):
 print(arr)
 changeA(arr +[1])
 print(arr)
-
+print(arr)
