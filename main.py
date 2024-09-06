@@ -1,12 +1,19 @@
+arr =[1,2,3,4]
+b=9
+ans =""
+def changArr():
+    brr=[1,3,4,5]
+    b =1
+    def changeBrr(b):
+        b=2
+        brr[2] = -1
+    changeBrr(b)
+    print("brr" ,brr,b)
 
-def climbStairs(n: int) -> int:
-    dp = [0]*(n+1)
-    dp[0]=1
-    dp[1]=1
-    for i in range(2,n+1):
-        dp[i] = dp[i-1]+dp[i-2]
-        print(dp)
+    arr[2]=-1
 
-    return dp[n]
 
-print( climbStairs(4))
+
+print(arr,b,ans)
+changArr()
+print(arr,b,ans)

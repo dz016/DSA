@@ -1,17 +1,8 @@
+from collections import deque
+
 class Graph:
     def __init__(self, n, edges, isDirected=True) -> None:
-        """
-        Initialize the graph.
 
-        Parameters:
-        n (int): Number of nodes in the graph.
-        edges (list of tuples): List of edges where each edge is represented as a tuple (u, v).
-        isDirected (bool): If True, the graph is directed. If False, the graph is undirected.
-
-        Creates:
-        - An adjacency list (self.adjList) to store the graph.
-        - An adjacency matrix (self.adjMat) to store the graph.
-        """
         # Create adjacency list
         self.adjList = {i: [] for i in range(n)}  # Initialize an empty list for each node
         for ele in edges:
@@ -26,6 +17,61 @@ class Graph:
             if not isDirected:
                 self.adjMat[ele[1]][ele[0]] = 1  # Mark the reverse edge if undirected
 
+
+
+    def BFSR(self,val=0):
+        visited = {key:False for key in self.adjList}
+        queue= deque()
+        queue.append(val)
+
+        ans =""
+        def _BFS():
+            nonlocal ans
+            n =len(queue)
+            if n != 0:
+                for _ in range(n):
+                    front_value = queue.popleft()
+                    if visited[front_value]:
+                        continue
+                    else:
+                        ans = ans + str(front_value) +" "
+                        for ele in self.adjList[front_value]:
+                            queue.append(ele)
+                        visited[front_value] = True
+
+
+
+                _BFS()
+
+            return
+
+
+        _BFS()
+        return ans
+
+
+    def BFSI(self,val =0):
+        visited = [False for _ in self.adjList]
+        queue = deque()
+        queue.append(val)
+        ans = ""
+
+        while queue:
+            n = len(queue)
+
+            for i in range(n):
+                front_value = queue.popleft()
+                if not visited[front_value]:
+                    ans =ans + str(front_value) + " "
+                    visited[front_value] = True
+
+                    for ele in self.adjList[front_value]:
+                        queue.append(ele)
+            ans = ans + ","
+
+
+        return ans
+
     def printAdjList(self):
         """Prints the adjacency list of the graph."""
         for v, n in self.adjList.items():
@@ -39,23 +85,9 @@ class Graph:
 
 # Test cases to demonstrate the functionality of the Graph class
 print("--------Test Graph 1--------")
-edges = [(0, 1), (0, 2), (1, 2), (2, 0), (2, 3), (3, 3)]
-g1 = Graph(4, edges, False)  # Creating an undirected graph
+edges = [(0, 1), (0, 2), (1, 2), (2, 3),(0,4),(1,5),(1,6),(6,7),(6,8),(2,9)]
+g1 = Graph(10, edges, False)  # Creating an undirected graph
 print("Undirected Graph - Adjacency List:")
 g1.printAdjList()  # Should print adjacency list for undirected graph
-print("\nUndirected Graph - Adjacency Matrix:")
-g1.printAdjMatrix()  # Should print adjacency matrix for undirected graph
-
-print("--------Test Graph 2--------")
-g2 = Graph(4, edges, True)  # Creating a directed graph
-print("\nDirected Graph - Adjacency List:")
-g2.printAdjList()  # Should print adjacency list for directed graph
-print("\nDirected Graph - Adjacency Matrix:")
-g2.printAdjMatrix()  # Should print adjacency matrix for directed graph
-
-print("--------Test Graph 3--------")
-g3 = Graph(4, [], True)  # Creating a graph with no edges
-print("\nEmpty Graph - Adjacency List:")
-g3.printAdjList()  # Should print an empty adjacency list
-print("\nEmpty Graph - Adjacency Matrix:")
-g3.printAdjMatrix()  # Should print an adjacency matrix filled with -1
+print(g1.BFSR())
+print(g1.BFSI())
