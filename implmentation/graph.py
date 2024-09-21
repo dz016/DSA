@@ -1,97 +1,166 @@
-from collections import deque
 
+from collections import deque
 class Graph:
-    def __init__(self, n, edges, isDirected=True) -> None:
-        # Create adjacency list
-        self.adjList = {i: [] for i in range(n)}
-        for ele in edges:
+    def __init__(self,V=0,edges=[], isDirected=False) -> None:
+        self.adjList = [[] for i in range(V)]
+
+        for i,ele in enumerate(edges):
             self.adjList[ele[0]].append(ele[1])
             if not isDirected:
                 self.adjList[ele[1]].append(ele[0])
 
-        # Create adjacency matrix
-        self.adjMat = [[-1 for _ in range(n)] for _ in range(n)]
-        for ele in edges:
-            self.adjMat[ele[0]][ele[1]] = 1
-            if not isDirected:
-                self.adjMat[ele[1]][ele[0]] = 1
+    def BFS(self,src =0):
+        visited = [False for i in self.adjList]
+        ans=[]
+        Q= deque()
+        Q.append((src,0))
+        while Q:
+            front_value = Q.popleft()
 
-    def BFSR(self, val=0):
-        visited = {key: False for key in self.adjList}
-        ans = ""
+            ans.append(front_value)
+            for  neighbor in self.adjList[front_value[0]]:
+               if not visited[neighbor]:
+                   Q.append((neighbor,front_value[1] +1))
+                   visited[neighbor]= True
+        return ans
+    def DFS(self,src=0):
 
-        def _BFS(queue):
-            nonlocal ans
-            if not queue:
-                return
+        visited= [ False for i in self.adjList]
+        ans = []
 
-            n = len(queue)
-            for _ in range(n):
-                front_value = queue.popleft()
-                if visited[front_value]:
-                    continue
-                ans += str(front_value) + " "
-                visited[front_value] = True
-                for ele in self.adjList[front_value]:
-                    if not visited[ele]:
-                        queue.append(ele)
+        def dfs(i):
+            ans.append(i)
+            visited[i] = True
+            for ele in self.adjList[i]:
+                if not visited[ele]:
+                    dfs(ele)
+        dfs(src)
+        return ans
 
-            _BFS(queue)
+    def cycle_dfs_undirected(self):
 
-        queue = deque([val])
-        _BFS(queue)
-        return ans.strip()
+        visited = [False for i in  self.adjList]
+        def dfs(curr, prev):
+            visited[curr]= True
+            for neighbour in self.adjList[curr]:
+                if not visited[neighbour]:
+                    if dfs(neighbour,curr):
+                        return True
+                elif neighbour != prev:
+                    return True
+            return False
 
-    def BFSI(self, val=0):
-        visited = [False for _ in self.adjList]
-        queue = deque([val])
-        ans = ""
+        return dfs(0,-1)
 
-        while queue:
-            n = len(queue)
-            for _ in range(n):
-                front_value = queue.popleft()
-                if not visited[front_value]:
-                    ans += str(front_value) + " "
-                    visited[front_value] = True
-                    for ele in self.adjList[front_value]:
-                        if not visited[ele]:
-                            queue.append(ele)
-            ans = ans.strip() + ","
+    def cycle_bfs_undirected(self):
+        visited = [False for i in  self.adjList]
+        Q= deque()
+        Q.append((0,-1))
+        while Q:
+            front_value=Q.popleft()
+            current= front_value[0]
+            came_from = front_value[1]
+            for neighbour in self.adjList[current]:
+                if not visited[neighbour]:
+                    Q.append((neighbour,current))
+                    visited[neighbour]= True
+                elif neighbour != came_from:
+                    return True
+        return False
 
-        return ans.strip(',')
 
-    def DFS(self, start):
-        visited = {key: False for key in self.adjList}
-        ans = ""
+    def cycle_dfs_directed(self):
+        visited =[False for i in self.adjList]
+        onPath =[False for i in self.adjList]
 
-        def _DFS(val):
-            if visited[val]:return
-            nonlocal ans
-            ans += str(val) + " "
-            visited[val] = True
-            for ele in self.adjList[val]:
-                    _DFS(ele)
+        def dfs(i):
+            visited[i]=True
+            onPath[i]=True
+            for neighbour in self.adjList[i]:
+                if not visited[neighbour]:
+                    if dfs(neighbour):
+                        return True
 
-        _DFS(start)
-        return ans.strip()
+                elif onPath[neighbour]:
+                    return True
 
-    def printAdjList(self):
-        """Prints the adjacency list of the graph."""
-        for v, n in self.adjList.items():
-            print(f"{v} -> {n}")
+            onPath[i]=False
+            return False
 
-    def printAdjMatrix(self):
-        """Prints the adjacency matrix of the graph."""
-        for row in self.adjMat:
-            print(row)
+        for i,ele in enumerate(visited):
+            if not ele:
+                if dfs(i):
+                    return True
+        return False
 
-# Test cases to demonstrate the functionality of the Graph class
-print("--------Test Graph 1--------")
-edges = [(0, 1), (0, 2), (1, 2), (2, 3), (0, 4), (1, 5), (1, 6), (6, 7), (6, 8), (2, 9)]
-g1 = Graph(10, edges, False)  # Creating an undirected graph
-print("Undirected Graph - Adjacency List:")
-g1.printAdjList()  # Should print adjacency list for undirected graph
-print("BFS Recursive:", g1.BFSR())
-print("BFS Iterative:", g1.BFSI())
-print("DFS:", g1.DFS(0))
+
+
+
+
+
+
+
+
+
+
+
+
+
+# # Test Case 1: Directed Graph
+# #cyclic
+V = 4
+edges = [(0, 1), (1, 2), (2, 0), (2, 3)]
+isDirected = True
+
+graph = Graph(V, edges, isDirected)
+print("adjList:",graph.adjList,end="\n")  # Expected Output: [[1], [2], [0,3]]
+print("BFS taraversal:", graph.BFS(),end="\n")
+print("DFS taraversal:", graph.DFS(),end="\n")
+print("Is there cycle?(dfs) ->:", graph.cycle_dfs_directed(),end="\n")
+
+# non-cyclic
+V = 4
+edges = [(0, 1), (1, 2), (2, 3)]
+isDirected = True
+
+graph = Graph(V, edges, isDirected)
+print("adjList:",graph.adjList,end="\n")  # Expected Output: [[1], [2], [0,3]]
+print("BFS taraversal:", graph.BFS(),end="\n")
+print("DFS taraversal:", graph.DFS(),end="\n")
+print("Is there cycle?(dfs) ->:", graph.cycle_dfs_directed(),end="\n")
+
+
+
+
+
+
+# Test Case 2: Undirected Graph
+# non-cyclic
+# V = 5
+# edges = [(0, 1), (1, 2), (1, 3), (3, 4)]  # No cycle, simple tree structure
+# isDirected = False
+
+# graph = Graph(V, edges, isDirected)
+# print("adjList:",graph.adjList,end="\n")  # Expected Output: [[1], [2], [0,3]]
+# print("BFS taraversal:", graph.BFS(),end="\n")
+# print("DFS taraversal:", graph.DFS(),end="\n")
+# print("Is there cycle?(dfs) ->:", graph.cycle_dfs_undirected(),end="\n") # Expected Output: [[1], [0, 2, 3], [1], [1, 4], [3]]
+# print("Is there cycle?(bfs) ->:", graph.cycle_bfs_undirected(),end="\n")
+# # cyclic
+# V = 5
+# edges = [(0, 1), (1, 2), (1, 3),(2,3), (3, 4)]  # No cycle, simple tree structure
+# isDirected = False
+
+# graph = Graph(V, edges, isDirected)
+# print("adjList:",graph.adjList,end="\n")  # Expected Output: [[1], [2], [0,3]]
+# print("BFS taraversal:", graph.BFS(),end="\n")
+# print("DFS taraversal:", graph.DFS(),end="\n")
+# print("Is there cycle?(dfs) ->:", graph.cycle_dfs_undirected(),end="\n")
+# print("Is there cycle?(bfs) ->:", graph.cycle_bfs_undirected(),end="\n")
+
+# #Test Case 3: DAG
+# V=6
+# edges=[(5,2),(5,0),(4,1),(4,0),(2,3),(3,1)]
+# isDirected=True
+# graph = Graph(V, edges, isDirected)
+# print(graph.adjList,graph.BFS(),graph.DFS())
